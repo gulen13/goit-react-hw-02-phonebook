@@ -1,5 +1,9 @@
 import { Component } from 'react';
 import { nanoid } from 'nanoid';
+import ContactForm from './ContactForm/ContactForm';
+import Filter from './Filter/Filter';
+import ContactList from './ContactList/ContactList';
+import { Container } from './App.styled';
 
 export class App extends Component {
   state = {
@@ -10,8 +14,6 @@ export class App extends Component {
       { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
     ],
     filter: '',
-    name: '',
-    number: '',
   };
 
   handleSubmit = event => {
@@ -29,7 +31,7 @@ export class App extends Component {
     }
 
     const newContact = {
-      id: name.id,
+      id: nanoid(),
       name: name.value,
       number: number.value,
     };
@@ -62,73 +64,19 @@ export class App extends Component {
     const visibleContacts = this.getVisibleContacts();
 
     return (
-      <div
-        style={{
-          height: '100vh',
-          // display: 'flex',
-          // justifyContent: 'center',
-          // alignItems: 'center',
-          fontSize: 20,
-          padding: 30,
-          color: '#010101',
-        }}
-      >
-        {' '}
-        <h2>Phonebook</h2>
-        <form autoComplete="off" onSubmit={this.handleSubmit}>
-          <label htmlFor={nanoid()}>
-            Name
-            <input
-              type="text"
-              name="name"
-              // pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
-              title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
-              placeholder="Jacob Mercer"
-              id={nanoid()}
-              required
-            />
-          </label>
-          <label htmlFor={nanoid()}>
-            Number
-            <input
-              type="tel"
-              name="number"
-              // pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
-              title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
-              placeholder="+380675006070"
-              id={nanoid()}
-              required
-            />
-          </label>
-          <button type="submit">Add Contact</button>
-        </form>
-        <div>
-          <h2>Contacts</h2>
-          <h3>Find contacts name</h3>
-          <input
-            type="text"
-            name="filter"
-            value={this.state.filter}
-            onChange={this.handleFilter}
-            id={nanoid()}
-          />
-          <ul>
-            {visibleContacts.map(item => (
-              <li key={item.id}>
-                {item.name}: {item.number}
-                <button
-                  type="button"
-                  onClick={() => {
-                    this.removeContact(item.id);
-                  }}
-                >
-                  Delete
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
+      <Container>
+        <h1>Phonebook</h1>
+        <ContactForm formSubmit={this.handleSubmit} />
+        <h2>Contacts</h2>
+        <Filter
+          filterValue={this.state.filter}
+          filterChange={this.handleFilter}
+        />
+        <ContactList
+          data={visibleContacts}
+          onDelete={this.removeContact}
+        />
+      </Container>
     );
   }
 }
